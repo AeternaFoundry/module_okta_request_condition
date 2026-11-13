@@ -46,5 +46,21 @@ EOT
       type = string
     })))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.request_conditions : (
+        v.status == null || (contains(["ACTIVE", "INACTIVE"], v.status))
+      )
+    ])
+    error_message = "must be one of: \"ACTIVE\", \"INACTIVE\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.request_conditions : (
+        v.access_duration_settings == null || alltrue([for item in v.access_duration_settings : (item.type == null || (contains(["ADMIN_FIXED_DURATION", "REQUESTER_SPECIFIED_DURATION"], item.type)))])
+      )
+    ])
+    error_message = "must be one of: \"ADMIN_FIXED_DURATION\", \"REQUESTER_SPECIFIED_DURATION\""
+  }
 }
 
